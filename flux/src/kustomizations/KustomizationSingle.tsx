@@ -1,4 +1,3 @@
-import { K8s } from '@kinvolk/headlamp-plugin/lib';
 import {
   ConditionsTable,
   Link,
@@ -21,9 +20,10 @@ import RemainingTimeDisplay from '../common/RemainingTimeDisplay';
 import StatusLabel from '../common/StatusLabel';
 import Table from '../common/Table';
 import { getSourceNameAndType, ObjectEvents } from '../helpers/index';
-import { GetResourcesFromInventory } from '../inventory';
+import { GetResourcesFromInventory } from './Inventory'
 import { kustomizationClass } from './KustomizationList';
 import { GetSource } from '../sources/Source';
+import { PluralName } from '../helpers/pluralName';
 
 export function FluxKustomizationDetailView() {
   const { namespace, name } = useParams<{ namespace: string; name: string }>();
@@ -74,10 +74,10 @@ function KustomizationDetails(props) {
         name: 'SourceRef',
         value: (
           <Link
-            routeName={`/flux/sources/:type/:namespace/:name`}
+            routeName="source"
             params={{
               namespace: cr?.jsonData?.metadata?.namespace,
-              type: sourceType,
+              pluralName: PluralName(sourceType),
               name: sourceName,
             }}
           >
@@ -147,7 +147,7 @@ function KustomizationDetails(props) {
                   accessorFn: item => {
                     return (
                       <Link
-                        routeName={`/flux/kustomizations/:namespace/:name`}
+                        routeName="kustomize"
                         params={{
                           name: item.name,
                           namespace: item.namespace || namespace,
@@ -161,7 +161,7 @@ function KustomizationDetails(props) {
                 {
                   header: 'Namespace',
                   accessorFn: item => (
-                    <Link routeName={`namespace`} params={{ name: item.namespace || namespace }}>
+                    <Link routeName="namespace" params={{ name: item.namespace || namespace }}>
                       {item.namespace || namespace}
                     </Link>
                   ),

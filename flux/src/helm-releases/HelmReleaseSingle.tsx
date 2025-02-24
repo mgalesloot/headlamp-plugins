@@ -1,4 +1,3 @@
-import { K8s } from '@kinvolk/headlamp-plugin/lib';
 import {
   ConditionsTable,
   Link,
@@ -21,9 +20,10 @@ import {
 import RemainingTimeDisplay from '../common/RemainingTimeDisplay';
 import StatusLabel from '../common/StatusLabel';
 import { getSourceNameAndType, ObjectEvents } from '../helpers/index';
-import { GetResourcesFromInventory } from '../inventory';
 import { helmReleaseClass } from './HelmReleaseList';
 import { GetSource } from '../sources/Source';
+import { NameLink } from '../helpers';
+import { PluralName } from '../helpers/pluralName';
 
 export function FluxHelmReleaseDetailView() {
   const { namespace, name } = useParams<{ namespace: string; name: string }>();
@@ -73,11 +73,11 @@ function CustomResourceDetails(props) {
         name: 'Source Ref',
         value: (
           <Link
-            routeName={`/flux/sources/:type/:namespace/:name`}
+            routeName="source"
             params={{
               namespace: cr?.jsonData?.metadata.namespace,
               name: sourceName,
-              type: sourceType,
+              pluralName: PluralName(sourceType),
             }}
           >
             {sourceName}
@@ -91,11 +91,11 @@ function CustomResourceDetails(props) {
         name: 'Source Ref',
         value: (
           <Link
-            routeName={`/flux/sources/:type/:namespace/:name`}
+            routeName="source"
             params={{
-              namespace: cr?.jsonData?.metadata?.namespace,
-              type: sourceType,
               name: sourceName,
+              namespace: cr?.jsonData?.metadata?.namespace,
+              pluralName: PluralName(sourceType),
             }}
           >
             {sourceName}
@@ -155,35 +155,28 @@ function CustomResourceDetails(props) {
           />
         </SectionBox>
       )}
-      {cr && (
-        <SectionBox title="Inventory">
-          <GetResourcesFromInventory inventory={cr?.jsonData?.status?.inventory?.entries} />
-        </SectionBox>
-      )}
       <SectionBox title="Dependencies">
         <Table
           data={cr?.jsonData?.spec?.dependsOn}
           columns={[
             {
               header: 'Name',
-              accessorFn: item => {
-                return (
-                  <Link
-                    routeName={`/flux/helmreleases/:namespace/:name`}
-                    params={{
-                      name: item.name,
-                      namespace: item.namespace || namespace,
-                    }}
-                  >
-                    {item.name}
-                  </Link>
-                );
-              },
+              accessorFn: item => (
+                <Link
+                  routeName="helm"
+                  params={{
+                    name: item.name,
+                    namespace: item.namespace || namespace,
+                  }}
+                >
+                  {item.name}
+                </Link>
+              ),
             },
             {
               header: 'Namespace',
               accessorFn: item => (
-                <Link routeName={`namespace`} params={{ name: item.namespace || namespace }}>
+                <Link routeName="namespace" params={{ name: item.namespace || namespace }}>
                   {item.namespace || namespace}
                 </Link>
               ),

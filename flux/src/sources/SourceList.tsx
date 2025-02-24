@@ -1,11 +1,13 @@
 import { Link, SectionBox } from '@kinvolk/headlamp-plugin/lib/components/common';
-import { KubeObjectIface, KubeObjectInterface } from '@kinvolk/headlamp-plugin/lib/lib/k8s/cluster';
+import { KubeObjectClass, KubeObjectIface, KubeObjectInterface } from '@kinvolk/headlamp-plugin/lib/lib/k8s/cluster';
 import { makeCustomResourceClass } from '@kinvolk/headlamp-plugin/lib/lib/k8s/crd';
 import { useFilterFunc } from '@kinvolk/headlamp-plugin/lib/Utils';
 import React from 'react';
 import { NotSupported } from '../checkflux';
 import SourceLink from '../common/Link';
 import Table, { TableProps } from '../common/Table';
+import { NameLink } from '../helpers';
+import { PluralName } from '../helpers/pluralName';
 
 const sourceGroup = 'source.toolkit.fluxcd.io';
 
@@ -79,7 +81,7 @@ export function FluxSources() {
 }
 
 interface FluxSourceCustomResourceRendererProps {
-  resourceClass: KubeObjectIface<KubeObjectInterface>;
+  resourceClass: KubeObjectClass;
   title: string;
   pluralName: string;
 }
@@ -181,6 +183,7 @@ function FluxSource(props: FluxSourceCustomResourceRendererProps) {
       },
     });
   }
+  
 
   if (error?.status === 404) {
       return <NotSupported typeName={title} />
