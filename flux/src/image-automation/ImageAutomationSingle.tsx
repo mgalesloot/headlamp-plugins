@@ -25,7 +25,11 @@ import {
 } from './ImageAutomationList';
 
 export function FluxImageAutomationDetailView() {
-  const { namespace, type, name } = useParams<{ namespace: string; type: string; name: string }>();
+  const { pluralName, namespace, name } = useParams<{
+    pluralName: string;
+    namespace: string;
+    name: string;
+  }>();
 
   const resourceClass = (() => {
     switch (type) {
